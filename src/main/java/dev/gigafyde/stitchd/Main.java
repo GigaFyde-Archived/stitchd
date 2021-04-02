@@ -2,8 +2,10 @@ package dev.gigafyde.stitchd;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,10 +15,11 @@ import javax.imageio.ImageIO;
 
 class Main {
     public static void main(String[] args) throws Exception {
-//        JDA jda = JDABuilder.createLight("token").addEventListeners(new PrivateMessageListener()).build();
-//        jda.awaitReady();
-        List<File> files = getFiles("images");
-        rewrite(files, 4);
+        System.out.println("Please enter the desired amount of pages");
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int number = Integer.parseInt(br.readLine());
+        List<File> files = getFiles("input");
+        rewrite(files, number);
     }
 
     private static List<File> getFiles(String path) throws IOException {
@@ -36,7 +39,7 @@ class Main {
         int offset = 0;
         for (int a = 0; a < pages; a++) {
             BufferedImage finalPage;
-            if (a == pages - 1) {
+            if (a == pages - 1 & remainder > 0) {
                 int pageHeight = getHeightIncludingRemainder(files, quotient, offset, remainder);
                 finalPage = new BufferedImage(pageWidth, pageHeight, BufferedImage.TYPE_INT_RGB);
             } else {
@@ -60,7 +63,7 @@ class Main {
                     height += page2.getHeight();
                 }
             }
-            ImageIO.write(finalPage, "jpg", new File(pagesDone + 1 + ".jpg"));
+            ImageIO.write(finalPage, "png", new File("output/" + (pagesDone + 1) + ".png"));
             pagesDone++;
         }
     }
@@ -82,17 +85,3 @@ class Main {
     }
 }
 
-
-
-
-//    private static void temp() throws IOException {
-//        String source = "download.zip";
-//        String destination = "temp/";
-//
-//        try {
-//            ZipFile zipFile = new ZipFile(source);
-//            zipFile.extractAll(destination);
-//        } catch (ZipException e) {
-//            e.printStackTrace();
-//        }
-//    }

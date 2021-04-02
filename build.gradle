@@ -1,28 +1,19 @@
 plugins {
     id 'java'
     id 'application'
+    id 'com.github.johnrengelman.shadow' version '5.1.0'
 }
 
 group 'dev.gigafyde'
 version '0.0.1'
 
+mainClassName = "dev.gigafyde.stitchd.Main"
+
 repositories {
     mavenCentral()
-    maven {
-        name 'm2-dv8tion'
-        url 'https://m2.dv8tion.net/releases'
-    }
 }
 
 dependencies {
-    // https://mvnrepository.com/artifact/net.lingala.zip4j/zip4j
-    implementation group: 'net.lingala.zip4j', name: 'zip4j', version: '2.7.0'
 
-    compile ('net.dv8tion:JDA:4.2.0_252') {
-        exclude module: 'opus-java'
-    }
 }
 
-test {
-    useJUnitPlatform()
-}
