@@ -35,8 +35,14 @@ class Main {
 
         int offset = 0;
         for (int a = 0; a < pages; a++) {
-            int pageHeight = getHeight(files, quotient, offset);
-            BufferedImage finalPage = new BufferedImage(pageWidth, pageHeight, BufferedImage.TYPE_INT_RGB);
+            BufferedImage finalPage;
+            if (a == pages - 1) {
+                int pageHeight = getHeightIncludingRemainder(files, quotient, offset, remainder);
+                finalPage = new BufferedImage(pageWidth, pageHeight, BufferedImage.TYPE_INT_RGB);
+            } else {
+                int pageHeight = getHeight(files, quotient, offset);
+                finalPage = new BufferedImage(pageWidth, pageHeight, BufferedImage.TYPE_INT_RGB);
+            }
             Graphics2D g2dColumn = finalPage.createGraphics();
             BufferedImage page = ImageIO.read(files.get(offset));
             g2dColumn.drawImage(page, 0, 0, null);
@@ -46,15 +52,14 @@ class Main {
                 g2dColumn.drawImage(page2, 0, height, null);
                 height += page2.getHeight();
             }
-
             offset += quotient;
-//            if (a == pages - 1) {
-//                for (int c = 0; c < remainder; c++) {
-//                    BufferedImage page2 = ImageIO.read(files.get(offset + c));
-//                    g2dColumn.drawImage(page2, 0, height, null);
-//                    height += page2.getHeight();
-//                }
-//            }
+            if (a == pages - 1) {
+                for (int c = 0; c < remainder; c++) {
+                    BufferedImage page2 = ImageIO.read(files.get(offset + c));
+                    g2dColumn.drawImage(page2, 0, height, null);
+                    height += page2.getHeight();
+                }
+            }
             ImageIO.write(finalPage, "jpg", new File(pagesDone + 1 + ".jpg"));
             pagesDone++;
         }
@@ -67,7 +72,16 @@ class Main {
         }
         return height;
     }
+
+    private static int getHeightIncludingRemainder(List<File> files, int pages, int offset, int remainder) throws IOException {
+        int height = 0;
+        for (int i = 0; i < (pages + remainder); i++) {
+            height += ImageIO.read(files.get(i + offset)).getHeight();
+        }
+        return height;
+    }
 }
+
 
 
 
